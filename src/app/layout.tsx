@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
+import { GoogleAnalytics } from '@next/third-parties/google';
 import "./globals.css";
 
 const inter = Inter({
@@ -12,6 +13,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "LocalConnect",
   description: "Your trusted directory for local professionals.",
+  verification: {
+    google: "YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_CODE",
+  },
 };
 
 export default function RootLayout({
@@ -54,6 +58,7 @@ export default function RootLayout({
           </div>
         </footer>
       </body>
+      <GoogleAnalytics gaId="G-XYZ" />
     </html>
   );
 }
