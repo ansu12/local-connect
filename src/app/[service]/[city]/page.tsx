@@ -14,7 +14,7 @@ import { AdSlot } from "@/components/AdSlot";
 
 const ReviewCarousel = dynamic(
   () => import('@/components/ReviewCarousel').then((mod) => mod.ReviewCarousel),
-  { ssr: false, loading: () => <div className="h-32 flex items-center justify-center text-muted-foreground animate-pulse">Loading reviews...</div> }
+  { loading: () => <div className="h-32 flex items-center justify-center text-muted-foreground animate-pulse">Loading reviews...</div> }
 );
 
 export async function generateStaticParams() {
