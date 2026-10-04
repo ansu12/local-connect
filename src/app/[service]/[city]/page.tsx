@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { Metadata } from "next";
@@ -197,9 +197,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ se
                 </CardContent>
                 <CardFooter className="bg-muted/30 pt-4 border-t flex flex-wrap justify-between items-center gap-4">
                   <span className="text-sm font-medium">{listing.phone}</span>
-                  <Button asChild>
-                    <Link href={`/${service.slug}/${city.slug}/${listing.slug}`} aria-label={`View profile for ${listing.name}`}>View Profile</Link>
-                  </Button>
+                  <Link href={`/${service.slug}/${city.slug}/${listing.slug}`} aria-label={`View profile for ${listing.name}`} className={buttonVariants()}>View Profile</Link>
                 </CardFooter>
               </Card>
               {index === 2 && <AdSlot id="ad-in-feed" />}
