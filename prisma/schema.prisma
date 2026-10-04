@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model City {
+  id           String   @id @default(cuid())
+  name         String
+  state        String
+  stateAbbr    String
+  slug         String   @unique
+  population   Int?
+  medianIncome Int?
+  
+  // Self-relation for nearby cities
+  nearbyCities City[]   @relation("NearbyCities")
+  nearbyOf     City[]   @relation("NearbyCities")
+
+  listings     Listing[]
+}
+
+model Service {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  category    String
+
+  listings    Listing[]
+}
+
+model Listing {
+  id             String    @id @default(cuid())
+  name           String
+  slug           String    @unique
+  address        String?
+  phone          String?
+  website        String?
+  rating         Float     @default(0.0)
+  reviewCount    Int       @default(0)
+  priceRange     String?
+  yearFounded    Int?
+  lastVerifiedAt DateTime?
+  specialties    String    // Stored as a comma-separated string because SQLite doesn't support String[]
+  source         String?
+  
+  cityId         String
+  city           City      @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  
+  serviceId      String
+  service        Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  reviews        Review[]
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  author    String
+  rating    Float
+  text      String
+  date      DateTime @default(now())
+  
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}

@@ -1,0 +1,70 @@
+name: Deploy and Index Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy_to_cloudflare:
+    name: Deploy to Cloudflare Pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      # Build project (Output directory: .next)
+      - name: Build Next.js App
+        run: npm run build
+
+      # Deploy to Cloudflare Pages
+      - name: Deploy to Cloudflare Pages
+        id: cf_deploy
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          projectName: 'local-connect'
+          directory: '.next'
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+  index_and_submit_sitemap:
+    name: Google Indexing & Sitemap Submission
+    needs: deploy_to_cloudflare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Google API Client
+        run: npm install googleapis tsx
+
+      # Creates a temporary JSON credentials file from GitHub Secrets
+      - name: Submit URLs to Google Indexing API
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          # Example URL, in a real scenario you would query your DB or sitemap diff
+          URLS_TO_INDEX: "https://www.localconnect.com/" 
+        run: |
+          echo "$GOOGLE_APPLICATION_CREDENTIALS_JSON" > /tmp/google-credentials.json
+          export GOOGLE_APPLICATION_CREDENTIALS="/tmp/google-credentials.json"
+          npx tsx scripts/index-urls.ts
+          rm /tmp/google-credentials.json
+
+      - name: Ping Google Search Console with Sitemap
+        run: |
+          curl -sS "https://www.google.com/ping?sitemap=https://www.localconnect.com/sitemap.xml" > /dev/null
+          echo "Sitemap submitted successfully."
