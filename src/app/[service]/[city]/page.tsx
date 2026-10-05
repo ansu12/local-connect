@@ -11,6 +11,8 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import React from "react";
 import { AdSlot } from "@/components/AdSlot";
+import { MascotState } from "@/components/MascotState";
+import { AffiliateLink } from "@/components/AffiliateLink";
 
 const ReviewCarousel = dynamic(
   () => import('@/components/ReviewCarousel').then((mod) => mod.ReviewCarousel),
@@ -205,9 +207,11 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ se
             ))}
             
             {listings.length === 0 && (
-              <div className="text-center py-12 bg-muted/20 rounded-lg border border-dashed">
-                <p className="text-muted-foreground">No listings found for this category in {city.name}.</p>
-              </div>
+              <MascotState 
+                type="empty" 
+                title={`No ${service.name}s found`} 
+                description={`We couldn't find any verified ${service.name} professionals in ${city.name} right now. Check back later!`} 
+              />
             )}
           </div>
 
@@ -283,6 +287,21 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ se
               </ul>
             </div>
           )}
+
+          {/* Affiliate Recommendation */}
+          <Card className="border-secondary/20 shadow-sm bg-secondary/5 mt-8">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-secondary-foreground">Recommended Tools</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">
+                Need to manage your {service.name} projects better? Try our recommended software tool.
+              </p>
+              <AffiliateLink href="https://example.com/affiliate" variant="secondary" className="w-full">
+                Get 20% Off Pro Tools
+              </AffiliateLink>
+            </CardContent>
+          </Card>
         </div>
       </div>
       

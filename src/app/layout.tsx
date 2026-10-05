@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { NewsletterForm } from "@/components/NewsletterForm";
 import "./globals.css";
 
 const inter = Inter({
@@ -46,15 +47,31 @@ export default function RootLayout({
           {children}
         </main>
         
-        <footer className="border-t py-6 bg-muted/40 mt-auto">
-          <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} LocalConnect. All rights reserved.
-            </p>
-            <nav className="flex gap-4 text-sm text-muted-foreground" aria-label="Footer Navigation">
-              <Link href="/privacy" className="hover:text-foreground" aria-label="Privacy Policy">Privacy</Link>
-              <Link href="/terms" className="hover:text-foreground" aria-label="Terms of Service">Terms</Link>
-            </nav>
+        <footer className="border-t py-12 bg-muted/40 mt-auto">
+          <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-start gap-8">
+            <div className="flex flex-col gap-4 max-w-xs">
+              <h3 className="font-bold text-lg">LocalConnect</h3>
+              <p className="text-sm text-muted-foreground">
+                Your trusted directory for finding the best local professionals in your city.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                © {new Date().getFullYear()} LocalConnect. All rights reserved.
+              </p>
+            </div>
+            
+            <div className="flex flex-col gap-4">
+              <h4 className="font-semibold">Newsletter</h4>
+              <p className="text-sm text-muted-foreground">Subscribe to get the latest updates and tips.</p>
+              <NewsletterForm />
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <h4 className="font-semibold">Legal</h4>
+              <nav className="flex flex-col gap-2 text-sm text-muted-foreground" aria-label="Footer Navigation">
+                <Link href="/privacy" className="hover:text-foreground" aria-label="Privacy Policy">Privacy Policy</Link>
+                <Link href="/terms" className="hover:text-foreground" aria-label="Terms of Service">Terms of Service</Link>
+              </nav>
+            </div>
           </div>
         </footer>
       </body>
