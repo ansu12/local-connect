@@ -140,7 +140,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ se
       </section>
 
       <div className="container mx-auto px-4">
-        <AdSlot id="ad-below-hero" />
+        <AdSlot position="below-hero" />
       </div>
 
       {/* 2. Local Stats & Insights */}
@@ -203,7 +203,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ se
                   <Link href={`/${service.slug}/${city.slug}/${listing.slug}`} aria-label={`View profile for ${listing.name}`} className={buttonVariants()}>View Profile</Link>
                 </CardFooter>
               </Card>
-              {index === 2 && <AdSlot id="ad-in-feed" />}
+              {index === 2 && <AdSlot position="mid-listings" />}
               </React.Fragment>
             ))}
             
@@ -303,11 +303,15 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ se
               </AffiliateLink>
             </CardContent>
           </Card>
+          
+          <div className="mt-8">
+            <AdSlot position="sidebar" />
+          </div>
         </div>
       </div>
       
       <div className="container mx-auto px-4 pb-12">
-        <AdSlot id="ad-above-footer" />
+        <AdSlot position="above-footer" />
       </div>
     </div>
   );
