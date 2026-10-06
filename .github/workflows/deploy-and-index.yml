@@ -26,7 +26,7 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           # Example URL, in a real scenario you would query your DB or sitemap diff
-          URLS_TO_INDEX: "https://www.localconnect.com/" 
+          URLS_TO_INDEX: "https://local-connect-ansu7.vercel.app/" 
         run: |
           echo "$GOOGLE_APPLICATION_CREDENTIALS_JSON" > /tmp/google-credentials.json
           export GOOGLE_APPLICATION_CREDENTIALS="/tmp/google-credentials.json"
@@ -35,5 +35,5 @@ jobs:
 
       - name: Ping Google Search Console with Sitemap
         run: |
-          curl -sS "https://www.google.com/ping?sitemap=https://www.localconnect.com/sitemap.xml" > /dev/null
+          curl -sS "https://www.google.com/ping?sitemap=https://local-connect-ansu7.vercel.app/sitemap.xml" > /dev/null
           echo "Sitemap submitted successfully."
