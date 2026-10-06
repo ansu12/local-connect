@@ -1,8 +1,59 @@
 export async function fetchListings(citySlug: string, serviceSlug: string) {
-  // Simulates fetching from an external API like Google Places or Yelp
-  await new Promise((resolve) => setTimeout(resolve, 800));
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+  
+  if (!apiKey) {
+    console.warn("GOOGLE_PLACES_API_KEY is not set. Falling back to mock data.");
+    return getMockData(citySlug, serviceSlug);
+  }
 
-  // Return mock raw listings
+  // Format the query: e.g. "plumber in austin-tx"
+  const query = `${serviceSlug.replace(/-/g, ' ')} in ${citySlug.replace(/-/g, ' ')}`;
+  
+  try {
+    const response = await fetch("https://places.googleapis.com/v1/places:searchText", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": apiKey,
+        // Request specific fields to save data and money
+        "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.priceLevel,places.primaryType",
+      },
+      body: JSON.stringify({
+        textQuery: query,
+        maxResultCount: 10,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Google Places API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    if (!data.places) return [];
+
+    return data.places.map((place: any) => ({
+      name: place.displayName?.text || "Unknown Business",
+      address: place.formattedAddress || "Address not provided",
+      phone: place.nationalPhoneNumber || null,
+      website: place.websiteUri || null,
+      rating: place.rating || 0,
+      reviewCount: place.userRatingCount || 0,
+      priceRange: place.priceLevel === 'PRICE_LEVEL_INEXPENSIVE' ? '$' : 
+                  place.priceLevel === 'PRICE_LEVEL_MODERATE' ? '$$' : 
+                  place.priceLevel === 'PRICE_LEVEL_EXPENSIVE' ? '$$$' : null,
+      yearFounded: null, // Google doesn't provide this; enricher agent will find it
+      specialties: place.primaryType ? place.primaryType.replace(/_/g, ' ') : "General",
+      source: "Google Places API",
+    }));
+
+  } catch (error) {
+    console.error("Failed to fetch real listings:", error);
+    return getMockData(citySlug, serviceSlug); // Safe fallback
+  }
+}
+
+function getMockData(citySlug: string, serviceSlug: string) {
   return [
     {
       name: `Elite ${serviceSlug} of ${citySlug}`,
@@ -14,7 +65,7 @@ export async function fetchListings(citySlug: string, serviceSlug: string) {
       priceRange: "$$",
       yearFounded: 2015,
       specialties: "Commercial,Residential",
-      source: "API",
+      source: "Mock API",
     },
     {
       name: `Budget ${serviceSlug} ${citySlug}`,
@@ -26,7 +77,7 @@ export async function fetchListings(citySlug: string, serviceSlug: string) {
       priceRange: "$",
       yearFounded: 2020,
       specialties: "Residential",
-      source: "API",
+      source: "Mock API",
     }
   ];
 }
