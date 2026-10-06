@@ -6,45 +6,8 @@ on:
       - main
 
 jobs:
-  deploy_to_cloudflare:
-    name: Deploy to Cloudflare Pages
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Dependencies
-        run: npm ci
-
-      # Build project (Output directory: .next)
-      - name: Build Next.js App
-        run: npm run build
-
-      # Deploy to Cloudflare Pages
-      - name: Deploy to Cloudflare Pages
-        id: cf_deploy
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: 'local-connect'
-          directory: '.next'
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-
-      # Run Accessibility Tests on the deployed URL
-      - name: Run Accessibility Tests (Axe-Core)
-        env:
-          TEST_URL: ${{ steps.cf_deploy.outputs.url }}
-        run: node test-a11y.js
-
   index_and_submit_sitemap:
     name: Google Indexing & Sitemap Submission
-    needs: deploy_to_cloudflare
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
