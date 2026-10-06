@@ -36,6 +36,12 @@ jobs:
           directory: '.next'
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
+      # Run Accessibility Tests on the deployed URL
+      - name: Run Accessibility Tests (Axe-Core)
+        env:
+          TEST_URL: ${{ steps.cf_deploy.outputs.url }}
+        run: node test-a11y.js
+
   index_and_submit_sitemap:
     name: Google Indexing & Sitemap Submission
     needs: deploy_to_cloudflare

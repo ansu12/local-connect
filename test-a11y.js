@@ -2,25 +2,32 @@ const puppeteer = require('puppeteer');
 const { AxePuppeteer } = require('@axe-core/puppeteer');
 
 (async () => {
+  const url = process.env.TEST_URL || 'http://localhost:3000';
+  console.log(`Starting accessibility tests for ${url}...`);
+  
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
+  const page = await browser.newPage();
+  
   try {
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox']
-    });
-    const page = await browser.newPage();
-
-    // In a real scenario we would navigate to a running local server.
-    // For this demonstration we will mock HTML and test it or we can wait for server.
-    // Assuming server runs on http://localhost:3000/plumbing/springfield
+    await page.goto(url, { waitUntil: 'networkidle0' });
+    const results = await new AxePuppeteer(page).analyze();
     
-    // We can't guarantee server works due to turbopack bindings, so we might just assume 
-    // the code changes I made are sufficient. However, if the server can start, we'll try.
-    
-    // Let's close the browser since this script is just a placeholder if the server can't be spun up.
-    await browser.close();
-    console.log("Axe-core test script created. Run the dev server to test against an actual page.");
-  } catch (err) {
-    console.error(err);
+    if (results.violations.length > 0) {
+      console.error(`Found ${results.violations.length} accessibility violations:`);
+      results.violations.forEach(v => {
+        console.error(`- [${v.impact}] ${v.id}: ${v.description}`);
+        v.nodes.forEach(n => console.error(`  Node: ${n.html}`));
+      });
+      process.exit(1);
+    } else {
+      console.log('✅ No accessibility violations found! WCAG AA standards passed.');
+    }
+  } catch (error) {
+    console.error(`Error running tests: ${error}`);
     process.exit(1);
+  } finally {
+    await browser.close();
   }
 })();
