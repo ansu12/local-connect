@@ -13,6 +13,7 @@ import React from "react";
 import { AdSlot } from "@/components/AdSlot";
 import { MascotState } from "@/components/MascotState";
 import { AffiliateLink } from "@/components/AffiliateLink";
+import { generateLocalInsight } from "@/lib/content-generator";
 
 const ReviewCarousel = dynamic(
   () => import('@/components/ReviewCarousel').then((mod) => mod.ReviewCarousel),
@@ -121,6 +122,8 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ se
     }
   ];
 
+  const localInsight = generateLocalInsight(city, service, listings);
+
   return (
     <div className="w-full">
       {/* 1. Hero */}
@@ -140,13 +143,11 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ se
         <AdSlot id="ad-below-hero" />
       </div>
 
-      {/* 2. Local Stats */}
+      {/* 2. Local Stats & Insights */}
       <section className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 py-8 text-center md:text-left">
+        <div className="container mx-auto px-4 py-10 text-center md:text-left">
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Serving the vibrant community of <span className="font-semibold text-foreground">{city.name}</span> (Population: {city.population?.toLocaleString()}). 
-            With a median income of ${city.medianIncome?.toLocaleString()}, residents demand high-quality {service.category.toLowerCase()}. 
-            We've found <span className="font-bold text-primary">{listings.length} top-rated professionals</span> ready to help.
+            {localInsight}
           </p>
         </div>
       </section>
