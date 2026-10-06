@@ -29,7 +29,7 @@ async function enrichListing(listing: any, systemPrompt: string) {
       }
     });
 
-    const text = response.text();
+    const text = response.text;
     if (!text) return null;
     return JSON.parse(text);
   } catch (err) {
