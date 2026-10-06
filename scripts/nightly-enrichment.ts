@@ -105,6 +105,18 @@ async function main() {
   }, null, 2));
 
   console.log(`Enrichment complete. Log saved to ${logFile}`);
+
+  // Automatically trigger a Vercel deployment by pushing the updated database to GitHub!
+  console.log("Pushing updated database to GitHub to trigger Vercel redeployment...");
+  const { execSync } = require('child_process');
+  try {
+    execSync('git add prisma/dev.db logs/');
+    execSync('git commit -m "Automated nightly data enrichment & SEO updates"');
+    execSync('git push origin main');
+    console.log("Successfully pushed to GitHub! Vercel is building the new pages.");
+  } catch (gitError) {
+    console.error("Git push skipped or failed (maybe no changes to commit):", gitError);
+  }
 }
 
 main()
