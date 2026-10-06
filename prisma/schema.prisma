@@ -45,6 +45,7 @@ model Listing {
   priceRange     String?
   yearFounded    Int?
   lastVerifiedAt DateTime?
+  lastEnrichedAt DateTime?
   verdictScore   Float     @default(0.0)
   specialties    String    // Stored as a comma-separated string because SQLite doesn't support String[]
   source         String?
