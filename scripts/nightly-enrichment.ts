@@ -2,7 +2,9 @@ import { PrismaClient } from "@prisma/client";
 import { GoogleGenAI } from "@google/genai";
 import * as fs from "fs";
 import * as path from "path";
+import { loadEnvConfig } from '@next/env';
 
+loadEnvConfig(process.cwd());
 const prisma = new PrismaClient();
 // Initialize Gemini SDK. Assumes GEMINI_API_KEY is set in .env
 const ai = new GoogleGenAI({});
